@@ -1,8 +1,10 @@
 package auth
 
 import (
+	"context"
 	"net/http"
 	"strings"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -29,7 +31,11 @@ func MiddlewareJWT(next http.HandlerFunc) http.HandlerFunc {
         }
 
 		 // token is valid, continue
-		next(w, r)
+		claims:= token.Claims.(jwt.MapClaims)
+		username := claims["username"].(string)
+
+		ctx := context.WithValue(r.Context(), "username",username)
+		next(w, r.WithContext(ctx))
 	
 	}
 }

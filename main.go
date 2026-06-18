@@ -21,7 +21,7 @@ func main() {
     http.HandleFunc("/auth/signup", auth.Signup)
     http.HandleFunc("/auth/login", auth.Login)
 
-    //http.HandleFunc("/trade/buy", auth.MiddlewareJWT(trade.Buy))
+    http.HandleFunc("/trade/buy", auth.MiddlewareJWT(trade.BuyStock))
     fmt.Println("Server running on port 8080")
     http.ListenAndServe(":8080", nil)
 }
