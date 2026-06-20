@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/rs/cors"
+
 	"github.com/david/trading-simulator/internal/auth"
 	"github.com/david/trading-simulator/internal/database"
 	"github.com/david/trading-simulator/internal/portfolio"
@@ -28,5 +30,15 @@ func main() {
 
     http.HandleFunc("/stocks/search", auth.MiddlewareJWT(trade.SearchStock))
     fmt.Println("Server running on port 8080")
-    http.ListenAndServe(":8080", nil)
+    c := cors.New(cors.Options{
+    AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5173","http://localhost:5174"}, // Add your React app's URL
+    AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+    AllowedHeaders:   []string{"Authorization", "Content-Type"},
+    AllowCredentials: true,
+    })
+
+    handler := c.Handler(http.DefaultServeMux)
+    if err := http.ListenAndServe(":8080", handler); err != nil {
+        fmt.Println("Server error:", err)
+    }
 }
