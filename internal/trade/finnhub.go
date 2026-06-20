@@ -19,6 +19,7 @@ func GetLivePrice(ticker string) (float64, error){
         return 0, err
     }
 
+	//end connection
 	defer resp.Body.Close()
 
 	var result FinnhubResponse
@@ -29,4 +30,47 @@ func GetLivePrice(ticker string) (float64, error){
     }
 
     return result.CurrentPrice, nil
+}
+
+
+
+
+type SearchResponse struct {
+    Count  int            `json:"count"`
+    Result []SearchResult `json:"result"`
+}
+
+type SearchResult struct {
+    Symbol      string `json:"symbol"`
+    Description string `json:"description"`
+    Type        string `json:"type"`
+}
+
+
+func SearchStock(w http.ResponseWriter, r *http.Request) {
+
+	query := r.URL.Query().Get("q") // we use query here cuz you are not passing a req body but rather a query for the url
+	if query == "" {
+    http.Error(w, "Search query required", http.StatusBadRequest)
+    return
+	}
+
+	key := os.Getenv("FINNHUB_API_KEY")
+	url := fmt.Sprintf("https://finnhub.io/api/v1/search?q=%s&token=%s", query, key)
+
+	resp, err := http.Get(url)
+	if err != nil {
+    http.Error(w, "Could not fetch results", http.StatusInternalServerError)
+    return
+	}
+
+	// end connection
+	defer resp.Body.Close()
+
+	var searchResponse SearchResponse
+	json.NewDecoder(resp.Body).Decode(&searchResponse)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode( searchResponse.Result)
+
 }

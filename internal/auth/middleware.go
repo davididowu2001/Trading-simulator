@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -19,18 +20,26 @@ func MiddlewareJWT(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// strip Bearer prefix
-		tokenString := strings.TrimPrefix(authHeader, "Bearer")
+		parts := strings.SplitN(authHeader, " ", 2)
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			http.Error(w, "invalid auth header", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString := strings.TrimSpace(parts[1])
+		fmt.Println("FIRST TOKEN CHAR:", string(tokenString[0]))
 		  // verify token
  		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
         	return jwtSecret, nil
         })	
-
+		
+		fmt.Println("Err:",err)
 		if err != nil || !token.Valid {
             http.Error(w, "Invalid token", http.StatusUnauthorized)
             return
         }
 
-		 // token is valid, continue
+	
 		claims:= token.Claims.(jwt.MapClaims)
 		username := claims["username"].(string)
 
