@@ -28,6 +28,8 @@ func main() {
     http.HandleFunc("/trade/sell", auth.MiddlewareJWT(trade.SellStock))
     http.HandleFunc("/portfolio", auth.MiddlewareJWT(portfolio.Getporfolio))
 
+    http.HandleFunc("/ws/prices", auth.MiddlewareJWT(trade.LivePrices))
+
     http.HandleFunc("/stocks/search", auth.MiddlewareJWT(trade.SearchStock))
     fmt.Println("Server running on port 8080")
     c := cors.New(cors.Options{
