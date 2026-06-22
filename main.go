@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/rs/cors"
 
@@ -16,7 +17,7 @@ import (
 
 
 func main() {
-    godotenv.Load()
+    _=godotenv.Load()
     database.Connect()
     database.CreateTables()
 
@@ -31,16 +32,26 @@ func main() {
     http.HandleFunc("/ws/prices", auth.MiddlewareJWT(trade.LivePrices))
 
     http.HandleFunc("/stocks/search", auth.MiddlewareJWT(trade.SearchStock))
-    fmt.Println("Server running on port 8080")
+    port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+    fmt.Printf("Server running on port %s\n", port)
+
     c := cors.New(cors.Options{
-    AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5173","http://localhost:5174"}, // Add your React app's URL
-    AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-    AllowedHeaders:   []string{"Authorization", "Content-Type"},
-    AllowCredentials: true,
-    })
+		AllowedOrigins: []string{
+			"http://localhost:3000", 
+			"http://localhost:5173", 
+			"http://localhost:5174",
+			"trading-simulator-production-22a9.up.railway.app", 
+		}, 
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		AllowCredentials: true,
+	})
 
     handler := c.Handler(http.DefaultServeMux)
-    if err := http.ListenAndServe(":8080", handler); err != nil {
+    if err := http.ListenAndServe(":" + port, handler); err != nil {
         fmt.Println("Server error:", err)
     }
 }
