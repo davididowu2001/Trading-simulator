@@ -43,7 +43,7 @@ func main() {
 			"http://localhost:3000", 
 			"http://localhost:5173", 
 			"http://localhost:5174",
-			"trading-simulator-production-22a9.up.railway.app", 
+			"https://trading-simulator-production-22a9.up.railway.app", 
 		}, 
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
