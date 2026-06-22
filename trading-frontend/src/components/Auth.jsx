@@ -9,8 +9,7 @@ export default function Auth() {
 
   // 1. Read the production base URL environment variable, or fallback to local
   const API_BASE_URL =
-    "https://trading-simulator-production-22a9.up.railway.app";
-  //import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
