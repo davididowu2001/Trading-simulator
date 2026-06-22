@@ -123,6 +123,21 @@ export default function Auth() {
             />
           </div>
 
+          {!isLogin && (
+            <div>
+              <label>Email</label>
+              <input
+                type="email"
+                required
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
           <div>
             <label
               style={{
