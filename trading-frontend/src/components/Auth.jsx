@@ -24,14 +24,22 @@ export default function Auth() {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { message: text };
+      }
 
       if (response.ok && data.token) {
         localStorage.setItem("jwt", data.token);
         navigate("/portfolio");
       } else {
         setError(
-          data.message ||
+          data.error ||
+            data.message ||
             "Authentication failed. Please check your credentials.",
         );
       }
