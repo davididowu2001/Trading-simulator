@@ -3,6 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -11,7 +12,14 @@ import (
 var DB *sqlx.DB
 
 func Connect(){
-	connStr := "host=localhost user=postgres password=secret dbname=trading_app sslmode=disable"
+    connStr := os.Getenv("DATABASE_URL")
+    // 2. If it's empty,
+	if connStr == "" {
+		connStr = "host=localhost user=postgres password=secret dbname=trading_app sslmode=disable"
+		fmt.Println("Connecting to LOCAL database...")
+	} else {
+		fmt.Println("Connecting to RAILWAY production database...")
+	}
 	
 	db, err := sqlx.Connect("postgres", connStr)
     if err != nil {
