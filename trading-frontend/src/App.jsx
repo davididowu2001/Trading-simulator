@@ -7,7 +7,7 @@ import {
 import Auth from "../src/components/Auth";
 import Portfolio from "../src/components/Portfolio";
 import Trade from "../src/components/Trade";
-
+import OrderHistory from "./components/OrderHistory";
 function App() {
   return (
     <Router>
@@ -16,6 +16,8 @@ function App() {
           <Route path="/" element={<Auth />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/trade" element={<Trade />} />
+          <Route path="/history" element={<OrderHistory />} />
+
           {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
