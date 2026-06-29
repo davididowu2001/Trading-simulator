@@ -15,10 +15,12 @@ export default function OrderHistory() {
   useEffect(() => {
     const loadOrderHistory = async () => {
       try {
+        // FIX 1: Make sure this exactly matches your Go route (trades plural)
         const data = await fetchWithAuth("/trades/history");
-        // Sort orders by executed_at descending so newest are on top
+
+        // FIX 2: Capitalized ExecutedAt
         const sortedOrders = data.sort(
-          (a, b) => new Date(b.executed_at) - new Date(a.executed_at),
+          (a, b) => new Date(b.ExecutedAt) - new Date(a.ExecutedAt),
         );
         setOrders(sortedOrders);
       } catch (error) {
@@ -76,22 +78,21 @@ export default function OrderHistory() {
         ) : (
           <ul className="holdings-list">
             {orders.map((order, index) => {
-              // CHANGE: Look for 'type' instead of 'action'
-              const isBuy = order.type?.toLowerCase() === "buy";
+              // FIX 3: Capitalized Type, ExecutedAt, Ticker, Shares, Price
+              const isBuy = order.Type?.toUpperCase() === "BUY";
 
-              // CHANGE: Look for 'executed_at' instead of 'timestamp'
-              const orderDate = order.executed_at
-                ? new Date(order.executed_at).toLocaleString(undefined, {
+              const orderDate = order.ExecutedAt
+                ? new Date(order.ExecutedAt).toLocaleString(undefined, {
                     dateStyle: "medium",
                     timeStyle: "short",
                   })
                 : "Unknown Date";
 
-              const totalExecutionValue = order.shares * order.price;
+              const totalExecutionValue = order.Shares * order.Price;
 
               return (
                 <li
-                  key={order.id || index}
+                  key={order.ID || index}
                   className="holding-card"
                   style={{
                     borderLeft: `4px solid ${isBuy ? "var(--profit-green)" : "#EF476F"}`,
@@ -105,7 +106,7 @@ export default function OrderHistory() {
                         gap: "10px",
                       }}
                     >
-                      <h3 style={{ margin: 0 }}>{order.ticker}</h3>
+                      <h3 style={{ margin: 0 }}>{order.Ticker}</h3>
                       <span
                         style={{
                           fontSize: "11px",
@@ -119,11 +120,11 @@ export default function OrderHistory() {
                           color: isBuy ? "var(--profit-green)" : "#EF476F",
                         }}
                       >
-                        {order.type} {/* Show Buy/Sell type here */}
+                        {order.Type}
                       </span>
                     </div>
                     <p style={{ margin: "5px 0 0 0" }}>
-                      {order.shares} shares @ ${order.price.toFixed(2)}
+                      {order.Shares} shares @ ${order.Price.toFixed(2)}
                     </p>
                     <span
                       style={{
