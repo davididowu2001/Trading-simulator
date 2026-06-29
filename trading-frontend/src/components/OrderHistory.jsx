@@ -15,7 +15,7 @@ export default function OrderHistory() {
   useEffect(() => {
     const loadOrderHistory = async () => {
       try {
-        const data = await fetchWithAuth("/trade/history");
+        const data = await fetchWithAuth("/trades/history");
         // Sort orders by executed_at descending so newest are on top
         const sortedOrders = data.sort(
           (a, b) => new Date(b.executed_at) - new Date(a.executed_at),
