@@ -31,6 +31,8 @@ func main() {
 
     http.HandleFunc("/ws/prices", auth.MiddlewareJWT(trade.LivePrices))
 
+	http.HandleFunc("/trades/history", auth.MiddlewareJWT(trade.GetUserHistory))
+
     http.HandleFunc("/stocks/search", auth.MiddlewareJWT(trade.SearchStock))
 	http.HandleFunc("/stocks/history", auth.MiddlewareJWT(trade.GetStockHistory))
     port := os.Getenv("PORT")

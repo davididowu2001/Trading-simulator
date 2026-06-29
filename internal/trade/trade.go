@@ -234,3 +234,21 @@ func SellStock (w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(map[string]string{"message":"success"})
 }
+
+
+func GetUserHistory(w http.ResponseWriter, r *http.Request){
+	username := r.Context().Value("username").(string)
+
+	var user models.User
+	err := database.DB.Get(&user, "SELECT * FROM users WHERE username = $1", username)
+	if err != nil{
+		http.Error(w, "User doesnt exist", http.StatusBadRequest)
+		return
+	}
+	var trades []models.Trade
+	err = database.DB.Select(&trades, "SELECT * FROM trades WHERE user_id = $1 ORDER BY executed_at DESC", user.ID)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(trades)
+
+}
