@@ -66,6 +66,10 @@ func BuyStock(w http.ResponseWriter, r *http.Request) {
 	}	
 
 	current_price, err := GetLivePrice(req.Ticker)
+	if err != nil {
+		http.Error(w, "Issue getting price", http.StatusInternalServerError)
+		return
+	}
 	fmt.Println(req.Shares)
 	total_cost := current_price * req.Shares
 
@@ -94,9 +98,14 @@ func BuyStock(w http.ResponseWriter, r *http.Request) {
 			return
 
 		}
-		_, err = tx.Exec(
-    	"INSERT INTO positions (user_id, ticker, shares, average_price) VALUES ($1, $2, $3, $4)",
-    	user.ID, req.Ticker, req.Shares, current_price,
+		_, err = tx.Exec(`
+			INSERT INTO positions (user_id, ticker, shares, average_price) 
+			VALUES ($1, $2, $3, $4)
+			ON CONFLICT (user_id, ticker) 
+			DO UPDATE SET 
+				average_price = ((positions.shares * positions.average_price) + ($3 * $4)) / (positions.shares + $3),
+				shares = positions.shares + $3`,
+			user.ID, req.Ticker, req.Shares, current_price,
 		)
 		if err != nil {
 			http.Error(w, "something went wrong with postion insertion", http.StatusInternalServerError)
