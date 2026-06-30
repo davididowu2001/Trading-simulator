@@ -30,11 +30,12 @@ func LivePrices(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tickerName := string(msg)
+	log.Printf("Fetching price for ticker: '%s'\n", tickerName)
 
 	log.Printf("User subscribed to live stream for: %s\n", tickerName)
 
 	// 3. Set up a timer to push data every 1 second
-	streamTimer := time.NewTicker(1 * time.Second)
+	streamTimer := time.NewTicker(10 * time.Second)
 	defer streamTimer.Stop()
 
 	// 4. Continuous stream loop
