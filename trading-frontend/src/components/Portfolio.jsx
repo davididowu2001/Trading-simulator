@@ -50,6 +50,7 @@ export default function Portfolio() {
      <div style={{ display: 'flex', gap: '20px' }}>
        <Link to="/portfolio" style={{ color: 'var(--text-primary)' }}>Portfolio</Link>
        <Link to="/trade">Trade</Link>
+        <Link to="/news" style={{ color: "var(--text-primary)" }}>News</Link>
        <Link to="/history">History</Link>
      </div>
      <button 

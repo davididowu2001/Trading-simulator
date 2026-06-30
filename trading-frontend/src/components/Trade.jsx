@@ -99,10 +99,12 @@ export default function Trade() {
       <nav style={{ justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", gap: "20px" }}>
           <Link to="/portfolio">Portfolio</Link>
-          <Link to="/trade" style={{ color: "var(--text-primary)" }}>
+          <Link to="/trade" style={{ color: "var(--text-primary)" }}> 
             Trade
           </Link>
           <Link to="/history">History</Link>
+          <Link to="/news" style={{ color: "var(--text-primary)" }}>News</Link>
+          
         </div>
         <button
           onClick={handleLogout}

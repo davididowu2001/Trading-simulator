@@ -38,6 +38,7 @@ export default function OrderHistory() {
         <div style={{ display: "flex", gap: "20px" }}>
           <Link to="/portfolio">Portfolio</Link>
           <Link to="/trade">Trade</Link>
+          <Link to="/news" style={{ color: "var(--text-primary)" }}>News</Link>
           <Link to="/history" style={{ color: "var(--text-primary)" }}>
             History
           </Link>
