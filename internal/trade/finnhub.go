@@ -143,3 +143,62 @@ func GetStockHistory(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(dataPoints)
 }
+
+type NewsItem struct {
+    Category string `json:"category"`
+    Datetime int64  `json:"datetime"`
+    Headline string `json:"headline"`
+    Image    string `json:"image"`
+    Source   string `json:"source"`
+    Summary  string `json:"summary"`
+    URL      string `json:"url"`
+}
+
+func GetALLNewsFeed(w http.ResponseWriter, r *http.Request) {
+	ticker := r.URL.Query().Get("ticker")
+	daterange := r.URL.Query().Get("dates")
+
+	key := os.Getenv("FINNHUB_API_KEY")
+	var url string
+
+	if ticker == "" {
+		// general market news
+		url = fmt.Sprintf("https://finnhub.io/api/v1/news?category=general&token=%s", key)
+	} else {
+		// company specific news
+		if daterange == "" {
+			http.Error(w, "Date range required for company news", http.StatusBadRequest)
+			return
+		}
+
+		now := time.Now().Format("2006-01-02")
+		var from string
+
+		switch daterange {
+		case "1D":
+			from = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+		case "3M":
+			from = time.Now().AddDate(0, -3, 0).Format("2006-01-02")
+		case "ALL":
+			from = time.Now().AddDate(-10, 0, 0).Format("2006-01-02")
+		default:
+			http.Error(w, "Invalid range", http.StatusBadRequest)
+			return
+		}
+
+		url = fmt.Sprintf("https://finnhub.io/api/v1/company-news?symbol=%s&from=%s&to=%s&token=%s", ticker, from, now, key)
+	}
+
+	resp, err := http.Get(url)
+	if err != nil {
+		http.Error(w, "Could not fetch results", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var news []NewsItem
+	json.NewDecoder(resp.Body).Decode(&news)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(news)
+}

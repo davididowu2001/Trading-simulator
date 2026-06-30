@@ -35,6 +35,7 @@ func main() {
 
     http.HandleFunc("/stocks/search", auth.MiddlewareJWT(trade.SearchStock))
 	http.HandleFunc("/stocks/history", auth.MiddlewareJWT(trade.GetStockHistory))
+	http.HandleFunc("/news", auth.MiddlewareJWT(trade.GetALLNewsFeed))
     port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
